@@ -1,0 +1,48 @@
+version: '3.3'
+services:
+ 
+
+  jupyter:
+    image:  ai-in-a-day
+    container_name: ai-in-a-day
+    hostname:
+        ai-in-a-day
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    command:  /bin/bash -c "  /opt/miniconda/bin/conda init bash && jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root --no-browser && /var/opt/jupyter/upload/python main.py && tail -f /dev/null "
+    #<mount> ECB: Required for mounting covid19dataset
+    cap_add:
+      - SYS_ADMIN   # REQUIRED FOR MOUNTING Dataset drives      
+    security_opt:
+      - apparmor:unconfined      
+    devices:
+      - "/dev/fuse:/dev/fuse"
+    #</mount>
+    volumes:
+     - type : bind
+       source: ./01-aml-model-training/
+       target: /var/opt/jupyter/01-aml-model-training/
+     - type : bind
+       source: ./02-aml-mlops/
+       target: /var/opt/jupyter/02-aml-mlops/
+     - type : bind
+       source: ./03-knowledge-mining/
+       target: /var/opt/jupyter/03-knowledge-mining/
+     - type : bind
+       source: ./04-conversational-ai/
+       target: /var/opt/jupyter/04-conversational-ai/
+     - type : bind
+       source: ./05-metrics-advisor/
+       target: /var/opt/jupyter/05-metrics-advisor/
+     - type : bind
+       source: ./06-ml-in-databricks/
+       target: /var/opt/jupyter/06-ml-in-databricks/
+   
+volumes:
+ localjupvolume:
+  
+  
+    
